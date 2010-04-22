@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.02';
+  $DBIx::Meld::ResultSet::VERSION = '0.03';
 }
 use Moose;
 use namespace::autoclean;
@@ -27,6 +27,9 @@ has 'meld' => (
     is       => 'ro',
     isa      => 'DBIx::Meld',
     required => 1,
+    handles => [qw(
+        connector
+    )],
 );
 
 has 'table' => (
@@ -40,6 +43,8 @@ has 'where' => (
     isa     => 'HashRef',
     default => sub{ {} },
 );
+
+with 'DBIx::Meld::Traits::SQLAbstract';
 
 =head1 METHODS
 
@@ -75,10 +80,10 @@ sub search {
 
 =cut
 
-sub insert {
-    my ($self, @args) = @_;
-    return $self->meld->insert( $self->table(), @args );
-}
+around 'insert' => sub{
+    my ($orig, $self, @args) = @_;
+    return $self->$orig->insert( $self->table(), @args );
+};
 
 =head2 update
 
@@ -87,10 +92,10 @@ sub insert {
 
 =cut
 
-sub update {
-    my ($self, $fields, @args) = @_;
-    return $self->meld->update( $self->table(), $fields, $self->where(), @args );
-}
+around 'update' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 delete
 
@@ -98,10 +103,10 @@ sub update {
 
 =cut
 
-sub delete {
-    my ($self, @args) = @_;
-    return $self->meld->delete( $self->table(), $self->where(), @args );
-}
+around 'delete' => sub{
+    my ($orig, $self, @args) = @_;
+    return $self->$orig( $self->table(), $self->where(), @args );
+};
 
 =head2 array_row
 
@@ -111,10 +116,10 @@ sub delete {
 
 =cut
 
-sub array_row {
-    my ($self, $fields, @args) = @_;
-    return $self->meld->array_row( $self->table(), $fields, $self->where(), @args );
-}
+around 'array_row' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 hash_row
 
@@ -123,10 +128,10 @@ sub array_row {
 
 =cut
 
-sub hash_row {
-    my ($self, $fields, @args) = @_;
-    return $self->meld->hash_row( $self->table(), $fields, $self->where(), @args );
-}
+around 'hash_row' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 array_of_array_rows
 
@@ -137,46 +142,82 @@ sub hash_row {
 
 =cut
 
-sub array_of_array_rows {
-    my ($self, $fields, @args) = @_;
-    return $self->meld->array_of_array_rows( $self->table(), $fields, $self->where(), @args );
-}
+around 'array_of_array_rows' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 array_of_hash_rows
 
 =cut
 
-sub array_of_hash_rows {
-    my ($self, $fields, @args) = @_;
-    return $self->meld->array_of_hash_rows( $self->table(), $fields, $self->where(), @args );
-}
+around 'array_of_hash_rows' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 hash_of_hash_rows
 
 =cut
 
-sub hash_of_hash_rows {
-    my ($self, $key, $fields, @args) = @_;
-    return $self->meld->hash_of_hash_rows( $key, $self->table(), $fields, $self->where(), @args );
-}
+around 'hash_of_hash_rows' => sub{
+    my ($orig, $self, $key, $fields, @args) = @_;
+    return $self->$orig( $key, $self->table(), $fields, $self->where(), @args );
+};
 
 =head2 count
 
 =cut
 
-sub count {
-    my ($self, @args) = @_;
-    return $self->meld->count( $self->table(), $self->where(), @args );
-}
+around 'count' => sub{
+    my ($orig, $self, @args) = @_;
+    return $self->$orig( $self->table(), $self->where(), @args );
+};
 
 =head2 column
 
 =cut
 
-sub column {
-    my ($self, $column, @args) = @_;
-    return $self->meld->column( $self->table(), $column, $self->where(), @args );
-}
+around 'column' => sub{
+    my ($orig, $self, $column, @args) = @_;
+    return $self->$orig( $self->table(), $column, $self->where(), @args );
+};
+
+=head2 select_sth
+
+=cut
+
+around 'select_sth' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
+
+=head2 insert_sth
+
+=cut
+
+around 'insert_sth' => sub{
+    my ($orig, $self, @args) = @_;
+    return $self->$orig( $self->table(), @args );
+};
+
+=head2 update_sth
+
+=cut
+
+around 'update_sth' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $fields, $self->where(), @args );
+};
+
+=head2 delete_sth
+
+=cut
+
+around 'delete_sth' => sub{
+    my ($orig, $self, $fields, @args) = @_;
+    return $self->$orig( $self->table(), $self->where(), @args );
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

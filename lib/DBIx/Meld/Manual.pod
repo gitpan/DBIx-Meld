@@ -1,0 +1,9 @@
+
+=head1 NAME
+
+DBIx::Meld::Manual - The DBIx::Meld developer's manual.
+
+=head1 TODO
+
+This document is a stub for now.
+

@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::SQLAbstract;
 BEGIN {
-  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.02';
+  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.03';
 }
 use Moose::Role;
 
@@ -29,13 +29,22 @@ sub _build_abstract {
     return SQL::Abstract->new();
 }
 
-sub _dbi_callout {
+sub _dbi_execute {
     my ($self, $dbh_method, $sql, $bind, $dbh_attrs) = @_;
 
     return $self->run(sub{
         my ($dbh) = @_;
         my $sth = $dbh->prepare_cached( $sql );
         return $dbh->$dbh_method( $sth, $dbh_attrs, @$bind );
+    });
+}
+
+sub _dbi_prepare {
+    my ($self, $sql) = @_;
+
+    return $self->run(sub{
+        my ($dbh) = @_;
+        return $dbh->prepare_cached( $sql );
     });
 }
 
@@ -56,7 +65,7 @@ accepts.
 sub insert {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->insert( @args );
-    $self->_dbi_callout( 'do', $sql, \@bind );
+    $self->_dbi_execute( 'do', $sql, \@bind );
     return;
 }
 
@@ -76,7 +85,7 @@ accepts.
 sub update {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->update( @args );
-    $self->_dbi_callout( 'do', $sql, \@bind );
+    $self->_dbi_execute( 'do', $sql, \@bind );
     return;
 }
 
@@ -95,7 +104,7 @@ accepts.
 sub delete {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->delete( @args );
-    $self->_dbi_callout( 'do', $sql, \@bind );
+    $self->_dbi_execute( 'do', $sql, \@bind );
     return;
 }
 
@@ -112,7 +121,7 @@ sub delete {
 sub array_row {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return [ $self->_dbi_callout( 'selectrow_array', $sql, \@bind ) ];
+    return [ $self->_dbi_execute( 'selectrow_array', $sql, \@bind ) ];
 }
 
 =head2 hash_row
@@ -128,7 +137,7 @@ sub array_row {
 sub hash_row {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->_dbi_callout( 'selectrow_hashref', $sql, \@bind );
+    return $self->_dbi_execute( 'selectrow_hashref', $sql, \@bind );
 }
 
 =head2 array_of_array_rows
@@ -148,7 +157,7 @@ Returns an array ref of array refs, one for each row returned.
 sub array_of_array_rows {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->_dbi_callout( 'selectall_arrayref', $sql, \@bind );
+    return $self->_dbi_execute( 'selectall_arrayref', $sql, \@bind );
 }
 
 =head2 array_of_hash_rows
@@ -158,7 +167,7 @@ sub array_of_array_rows {
 sub array_of_hash_rows {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->_dbi_callout( 'selectall_arrayref', $sql, \@bind, { Slice=>{} } );
+    return $self->_dbi_execute( 'selectall_arrayref', $sql, \@bind, { Slice=>{} } );
 }
 
 =head2 hash_of_hash_rows
@@ -204,7 +213,69 @@ sub count {
 sub column {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->_dbi_callout( 'selectcol_arrayref', $sql, \@bind );
+    return $self->_dbi_execute( 'selectcol_arrayref', $sql, \@bind );
+}
+
+=head2 select_sth
+
+    my $users_sth;
+    foreach my $status (0, 1) {
+        $users_sth ||= $meld->select_sth(
+            'users',
+            ['user_name', 'user_id'],
+            {status => $status},
+        );
+
+        $users_sth->execute(
+            $meld->bind_values( {status => $status} ),
+        );
+    }
+
+=cut
+
+sub select_sth {
+    my ($self, @args) = @_;
+    my ($sql, @bind) = $self->abstract->select( @args );
+    return $self->_dbi_prepare( $sql );
+}
+
+=head2 insert_sth
+
+=cut
+
+sub insert_sth {
+    my ($self, @args) = @_;
+    my ($sql, @bind) = $self->abstract->insert( @args );
+    return $self->_dbi_prepare( $sql );
+}
+
+=head2 update_sth
+
+=cut
+
+sub update_sth {
+    my ($self, @args) = @_;
+    my ($sql, @bind) = $self->abstract->update( @args );
+    return $self->_dbi_prepare( $sql );
+}
+
+=head2 delete_sth
+
+=cut
+
+sub delete_sth {
+    my ($self, @args) = @_;
+    my ($sql, @bind) = $self->abstract->delete( @args );
+    return $self->_dbi_prepare( $sql );
+}
+
+=head2 bind_values
+
+=cut
+
+sub bind_values {
+    my ($self, $fields) = @_;
+    return $self->abstract->values( $fields );
 }
 
 1;

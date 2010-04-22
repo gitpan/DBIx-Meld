@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::ResultSet;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::VERSION = '0.02';
+  $DBIx::Meld::Traits::ResultSet::VERSION = '0.03';
 }
 use Moose::Role;
 

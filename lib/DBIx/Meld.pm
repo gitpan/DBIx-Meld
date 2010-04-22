@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.02';
+  $DBIx::Meld::VERSION = '0.03';
 }
 use Moose;
 use namespace::autoclean;
@@ -35,10 +35,9 @@ of L<DBIx::Class>.
 
 =head1 WHY
 
-L<DBIx::Class> is a really great tool.  But, it doesn't fit some situations
-as it is too heavyweight in other situations.  In these situations, where you
-find yourself having to write raw DBI calls, you are suddenly left without
-all of the great features that DBIx::Class provides, such as:
+When writing raw DBI code there is a huge lacking of core features that
+other more advanced libraries provide, such as L<DBIx::Class>.  These
+missing features are:
 
 =over
 
@@ -53,8 +52,21 @@ all of the great features that DBIx::Class provides, such as:
 =back
 
 So, the intent of this module is to fill this gap.  With this module you
-are still dealing with low-level DBI calls, but you get many of the great
-benefits that DBIx::Class provides.
+are still dealing with low-level DBI calls, yet you still get many of these
+great benefits.
+
+Even with this module you will often need to write raw DBI code, as DBIx::Meld
+isn't meant to be the one tool that rules them all.  Instead, DBIx::Meld is
+meant to simplify the majority of the DBI work you do, but not all of it.
+
+=head1 YAORM
+
+This module is not "Yet Another ORM".  The point of this module is that
+*it is not an ORM*.  It is ORMish because it has some aspects that act
+similarly to the ORMs available to us today.  But, that is as deep as it
+goes.
+
+If you want an ORM, try out L<DBIx::Class>.  It is superb.
 
 =head1 CONSTRUCTOR
 
@@ -108,6 +120,9 @@ with 'DBIx::Meld::Traits::DBIxConnector';
 =head2 SQLAbstract
 
     $meld->insert('users', {user_name => 'smith023'});
+    $meld->update('users', {email => 'joe@example.com'}, {user_id => 123});
+    $meld->delete('users', {status => 0});
+    # etc...
 
 This trait provides access to most of L<SQL::Abstract>'s methods as methods
 on DBIx::Meld.  Ready more at L<DBIx::Meld::Traits::SQLAbstract>.
@@ -118,7 +133,9 @@ with 'DBIx::Meld::Traits::SQLAbstract';
 
 =head2 DateTimeFormat
 
+    my $format_class = $meld->datetime_formatter();
     $meld->format_datetime( DateTime->now() );
+    $meld->format_date( DateTime->now() );
 
 This trait provides access to the appropriate DateTime::Format module and
 provides helper methods on DBIx::Meld.  Read more at L<DBIx::Meld::Traits::DateTimeFormat>.
