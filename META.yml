@@ -16,8 +16,9 @@ requires:
   DBIx::Connector: 0.33
   Moose: 1.01
   MooseX::Types: 0.21
-  SQL::Astract: 1.65
+  SQL::Abstract: 1.65
   namespace::autoclean: 0.09
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=DBIx-Meld
-version: 0.01
+  repository: http://github.com/bluefeet/DBIx-Meld
+version: 0.02

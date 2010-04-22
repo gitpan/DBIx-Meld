@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::DateTimeFormat;
 BEGIN {
-  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.01';
+  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.02';
 }
 use Moose::Role;
 

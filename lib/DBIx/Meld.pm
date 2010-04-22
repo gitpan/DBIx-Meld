@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.01';
+  $DBIx::Meld::VERSION = '0.02';
 }
 use Moose;
 use namespace::autoclean;
@@ -55,10 +55,6 @@ all of the great features that DBIx::Class provides, such as:
 So, the intent of this module is to fill this gap.  With this module you
 are still dealing with low-level DBI calls, but you get many of the great
 benefits that DBIx::Class provides.
-
-=cut
-
-use DBIx::Meld::ResultSet;
 
 =head1 CONSTRUCTOR
 
@@ -124,31 +120,24 @@ with 'DBIx::Meld::Traits::SQLAbstract';
 
     $meld->format_datetime( DateTime->now() );
 
-This trait provides acces to the appropriate DateTime::Format module and
+This trait provides access to the appropriate DateTime::Format module and
 provides helper methods on DBIx::Meld.  Read more at L<DBIx::Meld::Traits::DateTimeFormat>.
 
 =cut
 
 with 'DBIx::Meld::Traits::DateTimeFormat';
 
-=head1 METHODS
+=head2 ResultSet
 
-=head2 resultset
+    my $user = $meld->resultset('users');
 
-    my $rs = $meld->resultset('users');
-
-Given a table name, this method will return a new L<DBIx::Meld::ResultSet> object.
+This trait provides the resultset() method which, when given a table
+name, returns an L<DBIx::Meld::ResultSet> object.  Read me at
+L<DBIx::Meld::Traits::ResultSet>.
 
 =cut
 
-sub resultset {
-    my ($self, $table) = @_;
-
-    return DBIx::Meld::ResultSet->new(
-        meld  => $self,
-        table => $table,
-    );
-}
+with 'DBIx::Meld::Traits::ResultSet';
 
 __PACKAGE__->meta->make_immutable;
 1;
@@ -156,11 +145,18 @@ __END__
 
 =head1 TODO
 
-Support GROUP BY, HAVING, and LIMIT (and Data::Page?) clauses when selecting data.
+=over
 
-Integrate DBIC's well-tested auto-generated ID retrieval code.  This can be tricky
+=item Support GROUP BY, HAVING, and LIMIT (and Data::Page?) clauses when selecting data.
+
+=item Integrate DBIC's well-tested auto-generated ID retrieval code.  This can be tricky
 since each DB does it in a different way (/looks at Oracle).  Then, insert() can
 return that ID.
+
+=item Support pluggable traits so that other CPAN authors can release distros that easly
+plug in and add functionality.
+
+=back
 
 =head1 AUTHOR
 

@@ -1,5 +1,12 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.02      2010-04-22
+  - Fix $rs->column() to call column() instead of count().
+  - Make the various SQLAbstract methods more consistant
+    (hash_row instead of row_hash, etc).
+  - Move some resultset code in to a new resultset trait.
+  - Fix "SQL::Astract" dependency.
+
 0.01      2010-04-21
- - First release.
+  - First release.
 

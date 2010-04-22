@@ -21,12 +21,12 @@ my %WriteMakefileArgs = (
                        'BUILD_REQUIRES' => {},
                        'ABSTRACT' => 'An ORMish amalgamation.',
                        'EXE_FILES' => [],
-                       'VERSION' => '0.01',
+                       'VERSION' => '0.02',
                        'PREREQ_PM' => {
+                                        'SQL::Abstract' => '1.65',
                                         'namespace::autoclean' => '0.09',
                                         'DBIx::Connector' => '0.33',
                                         'MooseX::Types' => '0.21',
-                                        'SQL::Astract' => '1.65',
                                         'Moose' => '1.01'
                                       },
                        'LICENSE' => 'perl'

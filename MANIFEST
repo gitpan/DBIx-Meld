@@ -9,6 +9,7 @@ lib/DBIx/Meld.pm
 lib/DBIx/Meld/ResultSet.pm
 lib/DBIx/Meld/Traits/DBIxConnector.pm
 lib/DBIx/Meld/Traits/DateTimeFormat.pm
+lib/DBIx/Meld/Traits/ResultSet.pm
 lib/DBIx/Meld/Traits/SQLAbstract.pm
 t/00-compile.t
 t/release-pod-coverage.t

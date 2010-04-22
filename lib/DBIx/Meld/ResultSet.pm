@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.01';
+  $DBIx::Meld::ResultSet::VERSION = '0.02';
 }
 use Moose;
 use namespace::autoclean;
@@ -103,61 +103,61 @@ sub delete {
     return $self->meld->delete( $self->table(), $self->where(), @args );
 }
 
-=head2 row_array
+=head2 array_row
 
-    my $row = $users->search({ user_id => 12 })->row_array(['user_name', 'email']);
+    my $row = $users->search({ user_id => 12 })->array_row(['user_name', 'email']);
     print $row->[0]; # user_name
     print $row->[1]; # email
 
 =cut
 
-sub row_array {
+sub array_row {
     my ($self, $fields, @args) = @_;
-    return $self->meld->row_array( $self->table(), $fields, $self->where(), @args );
+    return $self->meld->array_row( $self->table(), $fields, $self->where(), @args );
 }
 
-=head2 row_hash
+=head2 hash_row
 
-    my $row = $users->search({ user_id => 12 })->row_hash('*');
+    my $row = $users->search({ user_id => 12 })->hash_row('*');
     print $row->{user_name};
 
 =cut
 
-sub row_hash {
+sub hash_row {
     my ($self, $fields, @args) = @_;
-    return $self->meld->row_hash( $self->table(), $fields, $self->where(), @args );
+    return $self->meld->hash_row( $self->table(), $fields, $self->where(), @args );
 }
 
-=head2 array_of_row_arrays
+=head2 array_of_array_rows
 
-    my $rows = $users->search({ status => 1 })->array_of_row_arrays(['user_name']);
+    my $rows = $users->search({ status => 1 })->array_of_array_rows(['user_name']);
     foreach my $row (@$rows) {
         print $row->[0] . "\n";
     }
 
 =cut
 
-sub array_of_row_arrays {
+sub array_of_array_rows {
     my ($self, $fields, @args) = @_;
-    return $self->meld->array_of_row_arrays( $self->table(), $fields, $self->where(), @args );
+    return $self->meld->array_of_array_rows( $self->table(), $fields, $self->where(), @args );
 }
 
-=head2 array_of_row_hashes
+=head2 array_of_hash_rows
 
 =cut
 
-sub array_of_row_hashes {
+sub array_of_hash_rows {
     my ($self, $fields, @args) = @_;
-    return $self->meld->array_of_row_hashes( $self->table(), $fields, $self->where(), @args );
+    return $self->meld->array_of_hash_rows( $self->table(), $fields, $self->where(), @args );
 }
 
-=head2 hash_of_row_hashes
+=head2 hash_of_hash_rows
 
 =cut
 
-sub hash_of_row_hashes {
+sub hash_of_hash_rows {
     my ($self, $key, $fields, @args) = @_;
-    return $self->meld->hash_of_row_hashes( $key, $self->table(), $fields, $self->where(), @args );
+    return $self->meld->hash_of_hash_rows( $key, $self->table(), $fields, $self->where(), @args );
 }
 
 =head2 count
@@ -175,7 +175,7 @@ sub count {
 
 sub column {
     my ($self, $column, @args) = @_;
-    return $self->meld->count( $self->table(), $column, $self->where(), @args );
+    return $self->meld->column( $self->table(), $column, $self->where(), @args );
 }
 
 __PACKAGE__->meta->make_immutable;

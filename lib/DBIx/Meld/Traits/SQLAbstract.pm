@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::SQLAbstract;
 BEGIN {
-  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.01';
+  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.02';
 }
 use Moose::Role;
 
@@ -55,13 +55,8 @@ accepts.
 
 sub insert {
     my ($self, @args) = @_;
-
-    $self->run(sub{
-        my ($dbh) = @_;
-        my ($sql, @bind) = $self->abstract->insert( @args );
-        $self->_dbi_callout( 'do', $sql, \@bind );
-    });
-
+    my ($sql, @bind) = $self->abstract->insert( @args );
+    $self->_dbi_callout( 'do', $sql, \@bind );
     return;
 }
 
@@ -80,13 +75,8 @@ accepts.
 
 sub update {
     my ($self, @args) = @_;
-
-    $self->run(sub{
-        my ($dbh) = @_;
-        my ($sql, @bind) = $self->abstract->update( @args );
-        $self->_dbi_callout( 'do', $sql, \@bind );
-    });
-
+    my ($sql, @bind) = $self->abstract->update( @args );
+    $self->_dbi_callout( 'do', $sql, \@bind );
     return;
 }
 
@@ -104,19 +94,14 @@ accepts.
 
 sub delete {
     my ($self, @args) = @_;
-
-    $self->run(sub{
-        my ($dbh) = @_;
-        my ($sql, @bind) = $self->abstract->delete( @args );
-        $self->_dbi_callout( 'do', $sql, \@bind );
-    });
-
+    my ($sql, @bind) = $self->abstract->delete( @args );
+    $self->_dbi_callout( 'do', $sql, \@bind );
     return;
 }
 
-=head2 row_array
+=head2 array_row
 
-    my $user = $sweeet->selectrow_array(
+    my $user = $sweeet->array_row(
         'users',                                  # table name
         ['user_id', 'created', 'email', 'phone'], # fields to retrieve
         { user_name => $uname },                  # where clause
@@ -124,15 +109,15 @@ sub delete {
 
 =cut
 
-sub row_array {
+sub array_row {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
     return [ $self->_dbi_callout( 'selectrow_array', $sql, \@bind ) ];
 }
 
-=head2 row_hash
+=head2 hash_row
 
-    my $user = $meld->row_hash(
+    my $user = $meld->hash_row(
         'users',                    # table name
         ['user_id', 'created'],     # fields to retrieve
         { user_name => 'bob2003' }, # where clause
@@ -140,15 +125,15 @@ sub row_array {
 
 =cut
 
-sub row_hash {
+sub hash_row {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
     return $self->_dbi_callout( 'selectrow_hashref', $sql, \@bind );
 }
 
-=head2 array_of_row_arrays
+=head2 array_of_array_rows
 
-    my $disabled_users = $meld->selectall_arrayref(
+    my $disabled_users = $meld->array_of_array_rows(
         'users',                       # table name
         ['user_id', 'email', 'phone'], # fields to retrieve
         { status => 0 },               # where clause
@@ -160,27 +145,27 @@ Returns an array ref of array refs, one for each row returned.
 
 =cut
 
-sub array_of_row_arrays {
+sub array_of_array_rows {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
     return $self->_dbi_callout( 'selectall_arrayref', $sql, \@bind );
 }
 
-=head2 array_of_row_hashes
+=head2 array_of_hash_rows
 
 =cut
 
-sub array_of_row_hashes {
+sub array_of_hash_rows {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
     return $self->_dbi_callout( 'selectall_arrayref', $sql, \@bind, { Slice=>{} } );
 }
 
-=head2 hash_of_row_hashes
+=head2 hash_of_hash_rows
 
 =cut
 
-sub hash_of_row_hashes {
+sub hash_of_hash_rows {
     my ($self, $key, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
     return $self->run(sub{
@@ -202,12 +187,12 @@ sub hash_of_row_hashes {
 sub count {
     my ($self, $table, $where, @args) = @_;
 
-    my ($count) = $self->selectrow_array(
+    my ($count) = $self->array_row(
         $table,
         'COUNT(*)',
         $where,
         @args,
-    );
+    )->[0];
 
     return $count;
 }

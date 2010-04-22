@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::DBIxConnector;
 BEGIN {
-  $DBIx::Meld::Traits::DBIxConnector::VERSION = '0.01';
+  $DBIx::Meld::Traits::DBIxConnector::VERSION = '0.02';
 }
 use Moose::Role;
 
