@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::DateTimeFormat;
 BEGIN {
-  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.03';
+  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.04';
 }
 use Moose::Role;
 
@@ -9,6 +9,8 @@ use Moose::Role;
 DBIx::Meld::Traits::DateTimeFormat - Melds DateTime::Format::* with DBIx::Meld.
 
 =cut
+
+use Module::Load;
 
 my %driver_to_formatter = (
     mysql  => 'MySQL',
@@ -29,7 +31,10 @@ your database connection.
 
 sub datetime_formatter {
     my ($self) = @_;
-    return $driver_to_formatter{ $self->connector->driver->{driver} };
+    my $formatter = $driver_to_formatter{ $self->connector->driver->{driver} };
+    $formatter = 'DateTime::Format::' . $formatter;
+    load $formatter;
+    return $formatter;
 }
 
 =head2 format_datetime

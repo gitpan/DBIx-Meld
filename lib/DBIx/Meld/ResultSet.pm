@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.03';
+  $DBIx::Meld::ResultSet::VERSION = '0.04';
 }
 use Moose;
 use namespace::autoclean;
@@ -82,7 +82,7 @@ sub search {
 
 around 'insert' => sub{
     my ($orig, $self, @args) = @_;
-    return $self->$orig->insert( $self->table(), @args );
+    return $self->$orig( $self->table(), @args );
 };
 
 =head2 update
@@ -199,15 +199,6 @@ around 'select_sth' => sub{
 around 'insert_sth' => sub{
     my ($orig, $self, @args) = @_;
     return $self->$orig( $self->table(), @args );
-};
-
-=head2 update_sth
-
-=cut
-
-around 'update_sth' => sub{
-    my ($orig, $self, $fields, @args) = @_;
-    return $self->$orig( $self->table(), $fields, $self->where(), @args );
 };
 
 =head2 delete_sth

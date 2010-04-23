@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.03';
+  $DBIx::Meld::VERSION = '0.04';
 }
 use Moose;
 use namespace::autoclean;
@@ -33,6 +33,20 @@ This module combines the features of L<DBIx::Connector>, L<SQL::Abstract>,
 and the various DateTime::Format modules, with some of the design concepts
 of L<DBIx::Class>.
 
+=head1 EXPERIMENTAL
+
+This module is in a bit of an expirimental state.  It hasn't yet been used
+in any large procjets, some bits still need automated tests, and the API
+may still be changing before this module can be called stable.
+
+That being said, the majority of the features that this module provides
+will not be changing.  In addition, this module is a light-weight wrapper
+around code that has been stable for years and has regular production use,
+so don't be too worried.
+
+If you have a success story (or fail story) of using this module, or any
+other feedback, then please let the author know.
+
 =head1 WHY
 
 When writing raw DBI code there is a huge lacking of core features that
@@ -41,13 +55,13 @@ missing features are:
 
 =over
 
-=item Robust connection and transation handling.
+=item * Robust connection and transation handling.
 
-=item Greatly reduced need to write raw SQL.
+=item * Greatly reduced need to write raw SQL.
 
-=item Database independent date and time handling.
+=item * Database independent date and time handling.
 
-=item Ability to progressively construct queries using resultsets.
+=item * Ability to progressively construct queries using resultsets.
 
 =back
 
@@ -149,7 +163,7 @@ with 'DBIx::Meld::Traits::DateTimeFormat';
     my $user = $meld->resultset('users');
 
 This trait provides the resultset() method which, when given a table
-name, returns an L<DBIx::Meld::ResultSet> object.  Read me at
+name, returns an L<DBIx::Meld::ResultSet> object.  Read more at
 L<DBIx::Meld::Traits::ResultSet>.
 
 =cut
@@ -164,14 +178,20 @@ __END__
 
 =over
 
-=item Support GROUP BY, HAVING, and LIMIT (and Data::Page?) clauses when selecting data.
+=item * Support GROUP BY, HAVING, and LIMIT (and Data::Page?) clauses.
 
-=item Integrate DBIC's well-tested auto-generated ID retrieval code.  This can be tricky
+=item * Integrate DBIC's well-tested auto-generated ID retrieval code.  This can be tricky
 since each DB does it in a different way (/looks at Oracle).  Then, insert() can
 return that ID.
 
-=item Support pluggable traits so that other CPAN authors can release distros that easly
+=item * Support pluggable traits so that other CPAN authors can release distros that easly
 plug in and add functionality.
+
+=item * Add an update_sth() method to the SQLAbstract trait.  This is difficult since it
+appears that SQL::Abstract->values() only works with selects, inserts, and deletes.
+
+=item * Verify how DBI errors are propogated back to the user so that the error is useful
+and points to the area of code that best helps the user understand and fix the issue.
 
 =back
 

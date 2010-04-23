@@ -1,5 +1,10 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.04      2010-04-23
+  - More documentation fixes.
+  - Fix SQLAbstract trait so that it actually works.
+  - Add automated tests.
+
 0.03      2010-04-22
   - Lots of documentation edits.
   - Use Traits::SQLAbstract in the ResultSet class.

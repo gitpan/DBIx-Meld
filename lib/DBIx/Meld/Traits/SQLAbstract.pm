@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::SQLAbstract;
 BEGIN {
-  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.03';
+  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.04';
 }
 use Moose::Role;
 
@@ -32,17 +32,23 @@ sub _build_abstract {
 sub _dbi_execute {
     my ($self, $dbh_method, $sql, $bind, $dbh_attrs) = @_;
 
-    return $self->run(sub{
+    return $self->connector->run(sub{
         my ($dbh) = @_;
         my $sth = $dbh->prepare_cached( $sql );
-        return $dbh->$dbh_method( $sth, $dbh_attrs, @$bind );
+        if ($dbh_method eq 'do') {
+            $sth->execute( @$bind );
+        }
+        else {
+            return $dbh->$dbh_method( $sth, $dbh_attrs, @$bind );
+        }
+        return;
     });
 }
 
 sub _dbi_prepare {
     my ($self, $sql) = @_;
 
-    return $self->run(sub{
+    return $self->connector->run(sub{
         my ($dbh) = @_;
         return $dbh->prepare_cached( $sql );
     });
@@ -177,7 +183,7 @@ sub array_of_hash_rows {
 sub hash_of_hash_rows {
     my ($self, $key, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->run(sub{
+    return $self->connector->run(sub{
         my ($dbh) = @_;
         my $sth = $dbh->prepare_cached( $sql );
         return $dbh->selectall_hashref( $sth, $key, {}, @bind );
@@ -236,7 +242,7 @@ sub column {
 sub select_sth {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->select( @args );
-    return $self->_dbi_prepare( $sql );
+    return( $self->_dbi_prepare( $sql ), @bind );
 }
 
 =head2 insert_sth
@@ -246,16 +252,6 @@ sub select_sth {
 sub insert_sth {
     my ($self, @args) = @_;
     my ($sql, @bind) = $self->abstract->insert( @args );
-    return $self->_dbi_prepare( $sql );
-}
-
-=head2 update_sth
-
-=cut
-
-sub update_sth {
-    my ($self, @args) = @_;
-    my ($sql, @bind) = $self->abstract->update( @args );
     return $self->_dbi_prepare( $sql );
 }
 

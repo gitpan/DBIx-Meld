@@ -1,6 +1,7 @@
 Changes
 LICENSE
 MANIFEST
+MANIFEST.SKIP
 META.yml
 Makefile.PL
 README
@@ -13,5 +14,8 @@ lib/DBIx/Meld/Traits/DateTimeFormat.pm
 lib/DBIx/Meld/Traits/ResultSet.pm
 lib/DBIx/Meld/Traits/SQLAbstract.pm
 t/00-compile.t
+t/date_time_format.t
+t/dbix_connector.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/sql_abstract.t
