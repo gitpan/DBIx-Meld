@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::DateTimeFormat;
 BEGIN {
-  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.04';
+  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.05';
 }
 use Moose::Role;
 
@@ -39,8 +39,9 @@ sub datetime_formatter {
 
 =head2 format_datetime
 
-    # Print the current date and time in the DB's format.
     print $meld->format_datetime( DateTime->now() );
+
+Returns the date and time in the DB's format.
 
 =cut
 
@@ -51,13 +52,29 @@ sub format_datetime {
 
 =head2 format_date
 
+    # Print the current date in the DB's format.
     print $meld->format_date( DateTime->now() );
+
+Returns the date in the DB's format.
 
 =cut
 
 sub format_date {
     my ($self, $dt) = @_;
     return $self->datetime_formatter->format_date( $dt );
+}
+
+=head2 format_time
+
+    print $meld->format_time( DateTime->now() );
+
+Returns the time in the DB's format.
+
+=cut
+
+sub format_time {
+    my ($self, $dt) = @_;
+    return $self->datetime_formatter->format_time( $dt );
 }
 
 1;

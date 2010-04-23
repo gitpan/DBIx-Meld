@@ -13,12 +13,18 @@ meta-spec:
 name: DBIx-Meld
 recommends: {}
 requires:
+  Clone: 0.31
   DBIx::Connector: 0.33
+  Data::Page: 2.02
+  Module::Load: 0.18
   Moose: 1.01
   MooseX::Types: 0.21
   SQL::Abstract: 1.65
+  SQL::Abstract::Limit: 0.141
+  Test::Exception: 0.29
+  Test::Simple: 0.94
   namespace::autoclean: 0.09
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=DBIx-Meld
   repository: http://github.com/bluefeet/DBIx-Meld
-version: 0.04
+version: 0.05

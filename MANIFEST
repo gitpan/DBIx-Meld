@@ -18,4 +18,5 @@ t/date_time_format.t
 t/dbix_connector.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/result_set.pm
 t/sql_abstract.t

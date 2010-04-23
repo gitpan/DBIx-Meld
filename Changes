@@ -1,5 +1,10 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.05      2010-04-23
+ - Add module dependencies that were missed.
+ - Add tests for ResultSet.
+ - Add pager support to ResultSet, just like DBIC.
+
 0.04      2010-04-23
   - More documentation fixes.
   - Fix SQLAbstract trait so that it actually works.

@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::SQLAbstract;
 BEGIN {
-  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.04';
+  $DBIx::Meld::Traits::SQLAbstract::VERSION = '0.05';
 }
 use Moose::Role;
 
@@ -10,23 +10,32 @@ DBIx::Meld::Traits::SQLAbstract - Melds SQL::Abstract with DBIx::Meld.
 
 =cut
 
-use SQL::Abstract;
+use SQL::Abstract::Limit;
 
 =head1 ATTRIBUTES
 
 =head2 abstract
 
-The L<SQL::Abstract> object that is being used.
+The L<SQL::Abstract::Limit> (a subclass of L<SQL::Abstract> that adds LIMIT/OFFSET support)
+object that is being used.
 
 =cut
 
 has 'abstract' => (
     is => 'ro',
-    isa => 'SQL::Abstract',
+    isa => 'SQL::Abstract::Limit',
     lazy_build => 1,
 );
 sub _build_abstract {
-    return SQL::Abstract->new();
+    my ($self) = @_;
+
+    return $self->connector->run(sub{
+        my ($dbh) = @_;
+
+        return SQL::Abstract::Limit->new(
+            limit_dialect => $dbh,
+        );
+    });
 }
 
 sub _dbi_execute {
@@ -201,15 +210,8 @@ sub hash_of_hash_rows {
 
 sub count {
     my ($self, $table, $where, @args) = @_;
-
-    my ($count) = $self->array_row(
-        $table,
-        'COUNT(*)',
-        $where,
-        @args,
-    )->[0];
-
-    return $count;
+    my ($sql, @bind) = $self->abstract->select( $table, 'COUNT(*)', $where, @args );
+    return ( $self->_dbi_execute( 'selectrow_array', $sql, \@bind ) )[0];
 }
 
 =head2 column

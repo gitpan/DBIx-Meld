@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.04';
+  $DBIx::Meld::VERSION = '0.05';
 }
 use Moose;
 use namespace::autoclean;
@@ -36,7 +36,7 @@ of L<DBIx::Class>.
 =head1 EXPERIMENTAL
 
 This module is in a bit of an expirimental state.  It hasn't yet been used
-in any large procjets, some bits still need automated tests, and the API
+in any large projects, some bits still need automated tests, and the API
 may still be changing before this module can be called stable.
 
 That being said, the majority of the features that this module provides
