@@ -16,6 +16,7 @@ requires:
   Clone: 0.31
   DBIx::Connector: 0.33
   Data::Page: 2.02
+  List::MoreUtils: 0.22
   Module::Load: 0.18
   Moose: 1.01
   MooseX::Types: 0.21
@@ -27,4 +28,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=DBIx-Meld
   repository: http://github.com/bluefeet/DBIx-Meld
-version: 0.05
+version: 0.06

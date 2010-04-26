@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.05';
+  $DBIx::Meld::VERSION = '0.06';
 }
 use Moose;
 use namespace::autoclean;
@@ -11,21 +11,131 @@ DBIx::Meld - An ORMish amalgamation.
 
 =head1 SYNOPSIS
 
-    use DBIx::Meld;
+    # Use the same argument as DBI:
+    my $meld = DBIx::Meld->new(
+        $dsn,
+        $user,
+        $pass,
+        $attrs, # optional
+    );
     
-    my $meld = DBIx::Meld->new( $dsn, $user, $pass );
-    $meld->insert( 'users', {user_name => 'smith023'} );
+    # Or pass a pre-built DBIx::Connector object:
+    my $meld = DBIx::Meld->new( connector => $connector );
     
-    my $rows = $meld->array_of_hash_rows( 'users', ['user_name', 'email'], {status => 1} );
-    foreach my $row (@$rows) {
-        print "$row->{user_name}: $row->{email}\n";
+    # Several DBIx::Connector methods are proxied:
+    $meld->txn(sub{ ... });
+    $meld->run(sub{ ... });
+    $meld->svp(sub{ ... });
+    my $dbh = $meld->dbh();
+    
+    # If you need access to any other DBIx::Connector methods,
+    # go through the connector() accessor:
+    if ($meld->connector->connected()) { ... }
+    
+    my $abstract = $meld->abstract(); # The SQL::Abstract::Limit object.
+    
+    $meld->insert(
+        'users',                                            # table name
+        { user_name=>'bob2003', email=>'bob@example.com' }, # fields to insert
+        { returning => 'user_id' },                         # extra clauses
+    );
+    
+    $meld->update(
+        'users',                 # table name
+        { phone => '555-1234' }, # fields to update
+        { user_id => $uid },     # where clause
+    );
+    
+    $meld->delete(
+        'users',             # table name
+        { user_id => $uid }, # where clause
+    );
+    
+    my $user = $meld->array_row(
+        'users',                                  # table name
+        ['user_id', 'created', 'email', 'phone'], # fields to retrieve
+        { user_name => $uname },                  # where clause
+    );
+    
+    my $user = $meld->hash_row(
+        'users',                    # table name
+        ['user_id', 'created'],     # fields to retrieve
+        { user_name => 'bob2003' }, # where clause
+    );
+    
+    my $disabled_users = $meld->array_of_array_rows(
+        'users',                       # table name
+        ['user_id', 'email', 'phone'], # fields to retrieve
+        { status => 0 },               # where clause
+        { order_by => 'status' },      # extra clauses
+    );
+    print $disabled_users->[2]->[1];
+    
+    my $disabled_users = $meld->array_of_hash_rows(
+        'users',                       # table name
+        ['user_id', 'email', 'phone'], # fields to retrieve
+        { status => 0 },               # where clause
+        { order_by => 'user_name' },   # extra clauses
+    );
+    print $disabled_users->[2]->{email};
+    
+    my $disabled_users = $meld->hash_of_hash_rows(
+        'user_name',                   # column to index the hash by
+        'users',                       # table name
+        ['user_id', 'email', 'phone'], # fields to retrieve
+        { status => 0 },               # where clause
+        { limit => 20 },               # extra clauses
+    );
+    print $disabled_users->{jsmith}->{email};
+    
+    my $enabled_users_count = $meld->count(
+        'users',        # table name
+        { status => 1}, # where clause
+    );
+    
+    my $user_ids = $meld->column(
+        'users',                            # table name
+        'user_id',                          # column to retrieve
+        { status => 1},                     # where clause
+        { limit=>10, order_by=>'user_id' }, # extra clauses
+    );
+    
+    my ($sth, @bind) = $meld->select_sth(
+        'users',                  # table name
+        ['user_name', 'user_id'], # fields to retrieve
+        {status => 1 },           # where clause
+    );
+    $sth->execute( @bind );
+    $sth->bind_columns( \my( $user_name, $user_id ) );
+    while ($sth->fetch()) { ... }
+    
+    my $insert_sth;
+    foreach my $user_name (qw( jsmith bthompson gfillman )) {
+        my $fields = {
+            user_name => $user_name,
+            email     => $user_name . '@mycompany.com',
+        };
+    
+        $insert_sth ||= $meld->insert_sth(
+            'users', # table name
+            $fields, # fields to insert
+        );
+    
+        $insert_sth->execute(
+            $meld->bind_values( $fields ),
+        );
     }
     
-    # or, in a more ORMish fashion:
-    my $users = $meld->resultset('users');
-    $users->insert({user_name => 'smith023'});
+    my $rs = $meld->resultset('users');
     
-    my $rows = $users->search({ status => 1 })->array_of_hash_rows(['user_name', 'email']);
+    my $formatter = $meld->datetime_formatter();
+    print $formatter->format_date( DateTime->now() );
+    
+    print $meld->format_datetime( DateTime->now() );
+    
+    print $meld->format_date( DateTime->now() );
+    
+    print $meld->format_time( DateTime->now() );
 
 =head1 DESCRIPTION
 
@@ -82,74 +192,27 @@ goes.
 
 If you want an ORM, try out L<DBIx::Class>.  It is superb.
 
-=head1 CONSTRUCTOR
-
-There are several ways to create a new DBIx::Meld object.  The most
-common way is to call it just like DBIx::Connector:
-
-    my $meld = DBIx::Meld->new( $dsn, $user, $pass, $attrs ); # $attrs is optional
-
-Or you can do it using name/value pairs:
-
-    my $meld = DBIx::Meld->new( connector => [$dsn, $user, $pass] );
-
-The connector attribute may also be an already blessed object:
-
-    my $connector = DBIx::Connector->new( $dsn, $user, $pass );
-    my $meld = DBIx::Meld->new( connector => $connector );
-
-=cut
-
-around BUILDARGS => sub {
-    my $orig = shift;
-    my $class = shift;
-
-    # If the first argument looks like a DSN then assume that we're
-    # being called in DBIx::Connector style.
-    if (@_ and $_[0]=~m{:}) {
-        return $class->$orig(
-            connector => [ @_ ],
-        );
-    }
-
-    return $class->$orig(@_);
-};
-
 =head1 TRAITS
 
-=head2 DBIxConnector
-
-    $meld->txn(sub{ ... });
-    
-    # This does the same thing:
-    $meld->connector->txn(sub{ ... });
+=head2 Connector
 
 This traite provides all of L<DBIx::Connector>'s methods as methods on DBIx::Meld.
-Ready more at L<DBIx::Meld::Traits::DBIxConnector>.
+Ready more at L<DBIx::Meld::Traits::Connector>.
 
 =cut
 
-with 'DBIx::Meld::Traits::DBIxConnector';
+with 'DBIx::Meld::Traits::Connector';
 
-=head2 SQLAbstract
-
-    $meld->insert('users', {user_name => 'smith023'});
-    $meld->update('users', {email => 'joe@example.com'}, {user_id => 123});
-    $meld->delete('users', {status => 0});
-    # etc...
+=head2 Abstract
 
 This trait provides access to most of L<SQL::Abstract>'s methods as methods
-on DBIx::Meld.  Ready more at L<DBIx::Meld::Traits::SQLAbstract>.
+on DBIx::Meld.  Ready more at L<DBIx::Meld::Traits::Abstract>.
 
 =cut
 
-with 'DBIx::Meld::Traits::SQLAbstract';
+with 'DBIx::Meld::Traits::Abstract';
 
 =head2 DateTimeFormat
-
-    my $format_class = $meld->datetime_formatter();
-    $meld->format_datetime( DateTime->now() );
-    $meld->format_date( DateTime->now() );
 
 This trait provides access to the appropriate DateTime::Format module and
 provides helper methods on DBIx::Meld.  Read more at L<DBIx::Meld::Traits::DateTimeFormat>.
@@ -159,8 +222,6 @@ provides helper methods on DBIx::Meld.  Read more at L<DBIx::Meld::Traits::DateT
 with 'DBIx::Meld::Traits::DateTimeFormat';
 
 =head2 ResultSet
-
-    my $user = $meld->resultset('users');
 
 This trait provides the resultset() method which, when given a table
 name, returns an L<DBIx::Meld::ResultSet> object.  Read more at

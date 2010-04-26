@@ -1,6 +1,6 @@
-package DBIx::Meld::Traits::DBIxConnector;
+package DBIx::Meld::Traits::Connector;
 BEGIN {
-  $DBIx::Meld::Traits::DBIxConnector::VERSION = '0.05';
+  $DBIx::Meld::Traits::Connector::VERSION = '0.06';
 }
 use Moose::Role;
 
@@ -41,6 +41,27 @@ coerce DBIxConnector, from ArrayRef, via { DBIx::Connector->new( @$_ ) };
 
 =head2 connector
 
+    # Use the same argument as DBI:
+    my $meld = DBIx::Meld->new(
+        $dsn,
+        $user,
+        $pass,
+        $attrs, # optional
+    );
+    
+    # Or pass a pre-built DBIx::Connector object:
+    my $meld = DBIx::Meld->new( connector => $connector );
+    
+    # Several DBIx::Connector methods are proxied:
+    $meld->txn(sub{ ... });
+    $meld->run(sub{ ... });
+    $meld->svp(sub{ ... });
+    my $dbh = $meld->dbh();
+    
+    # If you need access to any other DBIx::Connector methods,
+    # go through the connector() accessor:
+    if ($meld->connector->connected()) { ... }
+
 This is the connector object.  It is required and is of type DBIxConnector.
 
 =cut
@@ -55,12 +76,23 @@ has 'connector' => (
         run
         txn
         svp
-        with
-        connected
-        in_txn
-        disconnect
     )],
 );
+
+around BUILDARGS => sub {
+    my $orig = shift;
+    my $class = shift;
+
+    # If the first argument looks like a DSN then assume that we're
+    # being called in DBIx::Connector style.
+    if (@_ and $_[0]=~m{:}) {
+        return $class->$orig(
+            connector => [ @_ ],
+        );
+    }
+
+    return $class->$orig(@_);
+};
 
 =head1 METHODS
 
@@ -71,14 +103,6 @@ has 'connector' => (
 =head2 txn
 
 =head2 svp
-
-=head2 with
-
-=head2 connected
-
-=head2 in_txn
-
-=head2 disconnect
 
 =cut
 

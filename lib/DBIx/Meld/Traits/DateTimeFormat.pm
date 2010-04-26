@@ -1,12 +1,17 @@
 package DBIx::Meld::Traits::DateTimeFormat;
 BEGIN {
-  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.05';
+  $DBIx::Meld::Traits::DateTimeFormat::VERSION = '0.06';
 }
 use Moose::Role;
 
 =head1 NAME
 
 DBIx::Meld::Traits::DateTimeFormat - Melds DateTime::Format::* with DBIx::Meld.
+
+=head1 DESCRIPTION
+
+This trait provides access to the correct DateTime::Format:: module
+for whatever kind of database you are connecting to.
 
 =cut
 
@@ -23,6 +28,9 @@ my %driver_to_formatter = (
 =head1 METHODS
 
 =head2 datetime_formatter
+
+    my $formatter = $meld->datetime_formatter();
+    print $formatter->format_date( DateTime->now() );
 
 This returns the DateTime::Format::* class that is appropriate for
 your database connection.
@@ -52,7 +60,6 @@ sub format_datetime {
 
 =head2 format_date
 
-    # Print the current date in the DB's format.
     print $meld->format_date( DateTime->now() );
 
 Returns the date in the DB's format.
