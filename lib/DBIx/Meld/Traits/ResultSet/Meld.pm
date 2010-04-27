@@ -1,19 +1,19 @@
 package DBIx::Meld::Traits::ResultSet::Meld;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Meld::VERSION = '0.06';
+  $DBIx::Meld::Traits::ResultSet::Meld::VERSION = '0.07';
 }
 use Moose::Role;
+
+=head1 NAME
+
+DBIx::Meld::Traits::ResultSet::Meld - Provides a meld object to result sets.
+
+=head1 ATTRIBUTES
 
 =head2 meld
 
 The L<DBIx::Meld> object that this resultset is using.  This attribute provides a
 proxy method to connector so that you can do:
-
-    $resultset->connector->run(sub{  ... });
-
-Instead of:
-
-    $resultset->meld->connector->run(sub{ ... });
 
 =cut
 
@@ -23,6 +23,7 @@ has 'meld' => (
     required => 1,
     handles => [qw(
         connector
+        abstract
     )],
 );
 

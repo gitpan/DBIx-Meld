@@ -1,6 +1,6 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.06';
+  $DBIx::Meld::VERSION = '0.07';
 }
 use Moose;
 use namespace::autoclean;
@@ -11,6 +11,8 @@ DBIx::Meld - An ORMish amalgamation.
 
 =head1 SYNOPSIS
 
+    use DBIx::Meld;
+    
     # Use the same argument as DBI:
     my $meld = DBIx::Meld->new(
         $dsn,
@@ -31,9 +33,7 @@ DBIx::Meld - An ORMish amalgamation.
     # If you need access to any other DBIx::Connector methods,
     # go through the connector() accessor:
     if ($meld->connector->connected()) { ... }
-    
-    my $abstract = $meld->abstract(); # The SQL::Abstract::Limit object.
-    
+
     $meld->insert(
         'users',                                            # table name
         { user_name=>'bob2003', email=>'bob@example.com' }, # fields to insert
@@ -125,9 +125,9 @@ DBIx::Meld - An ORMish amalgamation.
             $meld->bind_values( $fields ),
         );
     }
-    
+
     my $rs = $meld->resultset('users');
-    
+
     my $formatter = $meld->datetime_formatter();
     print $formatter->format_date( DateTime->now() );
     

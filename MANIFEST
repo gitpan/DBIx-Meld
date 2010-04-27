@@ -23,4 +23,3 @@ t/date_time_format.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/result_set.t
-update_synopsis.pl

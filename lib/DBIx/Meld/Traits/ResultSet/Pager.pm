@@ -1,13 +1,24 @@
 package DBIx::Meld::Traits::ResultSet::Pager;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.06';
+  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.07';
 }
 use Moose::Role;
+
+=head1 NAME
+
+DBIx::Meld::Traits::ResultSet::Pager - Provide data paging to result sets.
+
+=cut
 
 use Data::Page;
 use Carp qw( croak );
 
+=head1 ATTRIBUTES
+
 =head2 pager
+
+    my $rs = $meld->resultset('users')->search({}, {page=>2, rows=>50});
+    my $pager = $rs->pager(); # a pre-populated Data::Page object
 
 A L<Data::Page> object pre-populated based on page() and rows().  If
 page() has not been specified then trying to access page() will throw

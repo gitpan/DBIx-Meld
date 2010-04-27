@@ -1,12 +1,12 @@
 package DBIx::Meld::Traits::Abstract;
 BEGIN {
-  $DBIx::Meld::Traits::Abstract::VERSION = '0.06';
+  $DBIx::Meld::Traits::Abstract::VERSION = '0.07';
 }
 use Moose::Role;
 
 =head1 NAME
 
-DBIx::Meld::Traits::SQLAbstract - Melds SQL::Abstract with DBIx::Meld.
+DBIx::Meld::Traits::Abstract - Melds SQL::Abstract with DBIx::Meld.
 
 =head1 DESCRIPTION
 
@@ -26,8 +26,6 @@ use SQL::Abstract::Limit;
 =head1 ATTRIBUTES
 
 =head2 abstract
-
-    my $abstract = $meld->abstract(); # The SQL::Abstract::Limit object.
 
 The L<SQL::Abstract::Limit> (a subclass of L<SQL::Abstract> that adds LIMIT/OFFSET support)
 object.

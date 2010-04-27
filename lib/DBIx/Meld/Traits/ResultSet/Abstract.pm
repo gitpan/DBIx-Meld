@@ -1,35 +1,19 @@
 package DBIx::Meld::Traits::ResultSet::Abstract;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Abstract::VERSION = '0.06';
+  $DBIx::Meld::Traits::ResultSet::Abstract::VERSION = '0.07';
 }
 use Moose::Role;
 
-use SQL::Abstract::Limit;
-use Clone qw( clone );
-use List::MoreUtils qw( uniq );
+=head1 NAME
 
-=head2 abstract
-
-    my $abstract = $rs->abstract();
+DBIx::Meld::Traits::ResultSet::Abstract - Provides SQL::Abstract methods to result sets.
 
 =cut
 
-has 'abstract' => (
-    is => 'ro',
-    isa => 'SQL::Abstract::Limit',
-    lazy_build => 1,
-);
-sub _build_abstract {
-    my ($self) = @_;
+use Clone qw( clone );
+use List::MoreUtils qw( uniq );
 
-    return $self->meld->connector->run(sub{
-        my ($dbh) = @_;
-
-        return SQL::Abstract::Limit->new(
-            limit_dialect => $dbh,
-        );
-    });
-}
+=head1 ATTRIBUTES
 
 =head2 table
 
@@ -66,6 +50,8 @@ has 'clauses' => (
     isa     => 'HashRef',
     default => sub{ {} },
 );
+
+=head1 METHODS
 
 =head2 search
 

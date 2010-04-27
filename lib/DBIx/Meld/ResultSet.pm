@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.06';
+  $DBIx::Meld::ResultSet::VERSION = '0.07';
 }
 use Moose;
 use namespace::autoclean;
@@ -11,12 +11,6 @@ DBIx::Meld::ResultSet - An ORMish representation of a SQL query.
 
 =head1 SYNOPSIS
 
-    $resultset->connector->run(sub{  ... });
-    
-    $resultset->meld->connector->run(sub{ ... });
-    
-    my $abstract = $rs->abstract();
-    
     my $old_rs = $meld->resultset('users')->search({ status => 0 });
     my $new_rs = $old_rs->search({ age > 18 });
     print 'Disabled adults: ' . $new_rs->count() . "\n";
@@ -64,6 +58,9 @@ DBIx::Meld::ResultSet - An ORMish representation of a SQL query.
     
         $insert_sth->execute( $rs->bind_values( $fields ) );
     }
+
+    my $rs = $meld->resultset('users')->search({}, {page=>2, rows=>50});
+    my $pager = $rs->pager(); # a pre-populated Data::Page object
     
     print $rs->total_entries();
     

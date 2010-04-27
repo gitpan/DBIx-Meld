@@ -1,5 +1,11 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.07      2010-04-27
+ - Remove update_synopsis.pl from dist.
+ - Fix libs with wrong pod NAME.
+ - MORE documentation fixes and edits!
+ - No need for each result set to create its own abstract object.
+
 0.06      2010-04-26
  - Move all of ResultSet's capabilities in to result set traits.
  - Better tests.

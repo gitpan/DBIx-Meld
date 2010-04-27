@@ -1,12 +1,12 @@
 package DBIx::Meld::Traits::Connector;
 BEGIN {
-  $DBIx::Meld::Traits::Connector::VERSION = '0.06';
+  $DBIx::Meld::Traits::Connector::VERSION = '0.07';
 }
 use Moose::Role;
 
 =head1 NAME
 
-DBIx::Meld::Traits::DBIxConnector - Melds DBIx::Connector with DBIx::Meld.
+DBIx::Meld::Traits::Connector - Melds DBIx::Connector with DBIx::Meld.
 
 =head1 DESCRIPTION
 
@@ -41,6 +41,8 @@ coerce DBIxConnector, from ArrayRef, via { DBIx::Connector->new( @$_ ) };
 
 =head2 connector
 
+    use DBIx::Meld;
+    
     # Use the same argument as DBI:
     my $meld = DBIx::Meld->new(
         $dsn,
