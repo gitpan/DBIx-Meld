@@ -1,12 +1,12 @@
 package DBIx::Meld::Traits::ResultSet;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::VERSION = '0.07';
+  $DBIx::Meld::Traits::ResultSet::VERSION = '0.08';
 }
 use Moose::Role;
 
 =head1 NAME
 
-DBIx::Meld::Traits::ResultSet - Provides resultsets to DBIx::Meld.
+DBIx::Meld::Traits::ResultSet - Provides result sets to DBIx::Meld.
 
 =cut
 

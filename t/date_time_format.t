@@ -3,18 +3,6 @@ use strict;
 use warnings;
 
 use Test::More;
-
-BEGIN {
-    eval { require DateTime };
-    plan skip_all => 'this test requires DateTime' if $@;
-
-    eval { require DateTime::Format::SQLite };
-    plan skip_all => 'this test requires DateTime::Format::SQLite' if $@;
-
-    eval { require DBD::SQLite };
-    plan skip_all => 'this test requires DBD::SQLite' if $@;
-}
-
 use DBIx::Meld;
 use DateTime;
 

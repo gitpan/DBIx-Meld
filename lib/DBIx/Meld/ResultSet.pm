@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.07';
+  $DBIx::Meld::ResultSet::VERSION = '0.08';
 }
 use Moose;
 use namespace::autoclean;
@@ -89,7 +89,7 @@ with 'DBIx::Meld::Traits::ResultSet::Meld';
 =head2 Abstract
 
 Additional simplifications to the various insert/update/delete/select
-calls as well as the ability to search() on a resultset.
+calls as well as the ability to search() on a result set.
 Ready more at L<DBIx::Meld::Traits::ResultSet::Abstract>.
 
 =cut
@@ -98,7 +98,7 @@ with 'DBIx::Meld::Traits::ResultSet::Abstract';
 
 =head2 Pager
 
-Provides the ability to page a resultset.
+Provides the ability to page a result set.
 Ready more at L<DBIx::Meld::Traits::ResultSet::Pager>.
 
 =cut

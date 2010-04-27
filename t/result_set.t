@@ -3,12 +3,6 @@ use strict;
 use warnings;
 
 use Test::More;
-
-BEGIN {
-    eval { require DBD::SQLite };
-    plan skip_all => 'this test requires DBD::SQLite' if $@;
-}
-
 use DBIx::Meld;
 
 my $meld = DBIx::Meld->new( 'dbi:SQLite:dbname=t/test.db', '', '' );

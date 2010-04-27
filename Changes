@@ -1,5 +1,9 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.08      2010-04-27
+ - More documentation edits.
+ - Add build prerequisits so that tests actually get run.
+
 0.07      2010-04-27
  - Remove update_synopsis.pl from dist.
  - Fix libs with wrong pod NAME.
@@ -30,7 +34,7 @@ Revision history for Perl extension DBIx::Meld.
   - Fix $rs->column() to call column() instead of count().
   - Make the various SQLAbstract methods more consistant
     (hash_row instead of row_hash, etc).
-  - Move some resultset code in to a new resultset trait.
+  - Move some result set code in to a new ResultSet trait.
   - Fix "SQL::Astract" dependency.
 
 0.01      2010-04-21

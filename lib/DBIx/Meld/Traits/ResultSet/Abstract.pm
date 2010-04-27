@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::ResultSet::Abstract;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Abstract::VERSION = '0.07';
+  $DBIx::Meld::Traits::ResultSet::Abstract::VERSION = '0.08';
 }
 use Moose::Role;
 
@@ -17,7 +17,7 @@ use List::MoreUtils qw( uniq );
 
 =head2 table
 
-The name of the table that this resultset will be using for queries.
+The name of the table that this result set will be using for queries.
 
 =cut
 
@@ -59,9 +59,9 @@ has 'clauses' => (
     my $new_rs = $old_rs->search({ age > 18 });
     print 'Disabled adults: ' . $new_rs->count() . "\n";
 
-Returns a new resultset object that overlays the passed in where clause
-on top of the old where clause, creating a new resultset.  The original
-resultset's where clause is left unmodified.
+Returns a new result set object that overlays the passed in where clause
+on top of the old where clause, creating a new result set.  The original
+result set's where clause is left unmodified.
 
 =cut
 

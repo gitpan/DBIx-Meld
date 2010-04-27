@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::Abstract;
 BEGIN {
-  $DBIx::Meld::Traits::Abstract::VERSION = '0.07';
+  $DBIx::Meld::Traits::Abstract::VERSION = '0.08';
 }
 use Moose::Role;
 

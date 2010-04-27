@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::ResultSet::Pager;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.07';
+  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.08';
 }
 use Moose::Role;
 
@@ -47,7 +47,7 @@ has 'pager' => (
 sub _build_pager {
     my ($self) = @_;
 
-    croak 'pager() can only be called on pageing resultsets' if !$self->clauses->{page};
+    croak 'pager() can only be called on pageing result sets' if !$self->clauses->{page};
 
     my $pager = Data::Page->new();
     $pager->total_entries( $self->search({}, {page=>0})->count() );

@@ -1,9 +1,14 @@
 package DBIx::Meld;
 BEGIN {
-  $DBIx::Meld::VERSION = '0.07';
+  $DBIx::Meld::VERSION = '0.08';
 }
 use Moose;
 use namespace::autoclean;
+
+with 'DBIx::Meld::Traits::Connector';
+with 'DBIx::Meld::Traits::Abstract';
+with 'DBIx::Meld::Traits::ResultSet';
+with 'DBIx::Meld::Traits::DateTimeFormat';
 
 =head1 NAME
 
@@ -141,105 +146,31 @@ DBIx::Meld - An ORMish amalgamation.
 
 This module combines the features of L<DBIx::Connector>, L<SQL::Abstract>,
 and the various DateTime::Format modules, with some of the design concepts
-of L<DBIx::Class>.
+of L<DBIx::Class>.  These features include robust connection and transaction
+handling, greatly reduced need to write raw SQL, database independent date
+and time handling, and the ability to progressively construct queries using
+result sets
 
-=head1 EXPERIMENTAL
+Note that this module is not an ORM, but is intended to be a lightweight
+alternative to a full blown ORM.  If you want an ORM, try out L<DBIx::Class>.
 
-This module is in a bit of an expirimental state.  It hasn't yet been used
-in any large projects, some bits still need automated tests, and the API
-may still be changing before this module can be called stable.
-
-That being said, the majority of the features that this module provides
-will not be changing.  In addition, this module is a light-weight wrapper
-around code that has been stable for years and has regular production use,
-so don't be too worried.
-
-If you have a success story (or fail story) of using this module, or any
-other feedback, then please let the author know.
-
-=head1 WHY
-
-When writing raw DBI code there is a huge lacking of core features that
-other more advanced libraries provide, such as L<DBIx::Class>.  These
-missing features are:
+=head1 SUPPORT
 
 =over
 
-=item * Robust connection and transation handling.
+=item * View/Report Bugs: L<http://rt.cpan.org/Public/Dist/Display.html?Name=DBIx-Meld>
 
-=item * Greatly reduced need to write raw SQL.
+=item * Repository: L<http://github.com/bluefeet/DBIx-Meld>
 
-=item * Database independent date and time handling.
-
-=item * Ability to progressively construct queries using resultsets.
+=item * Mailing List: L<http://groups.google.com/group/dbix-meld>
 
 =back
-
-So, the intent of this module is to fill this gap.  With this module you
-are still dealing with low-level DBI calls, yet you still get many of these
-great benefits.
-
-Even with this module you will often need to write raw DBI code, as DBIx::Meld
-isn't meant to be the one tool that rules them all.  Instead, DBIx::Meld is
-meant to simplify the majority of the DBI work you do, but not all of it.
-
-=head1 YAORM
-
-This module is not "Yet Another ORM".  The point of this module is that
-*it is not an ORM*.  It is ORMish because it has some aspects that act
-similarly to the ORMs available to us today.  But, that is as deep as it
-goes.
-
-If you want an ORM, try out L<DBIx::Class>.  It is superb.
-
-=head1 TRAITS
-
-=head2 Connector
-
-This traite provides all of L<DBIx::Connector>'s methods as methods on DBIx::Meld.
-Ready more at L<DBIx::Meld::Traits::Connector>.
-
-=cut
-
-with 'DBIx::Meld::Traits::Connector';
-
-=head2 Abstract
-
-This trait provides access to most of L<SQL::Abstract>'s methods as methods
-on DBIx::Meld.  Ready more at L<DBIx::Meld::Traits::Abstract>.
-
-=cut
-
-with 'DBIx::Meld::Traits::Abstract';
-
-=head2 DateTimeFormat
-
-This trait provides access to the appropriate DateTime::Format module and
-provides helper methods on DBIx::Meld.  Read more at L<DBIx::Meld::Traits::DateTimeFormat>.
-
-=cut
-
-with 'DBIx::Meld::Traits::DateTimeFormat';
-
-=head2 ResultSet
-
-This trait provides the resultset() method which, when given a table
-name, returns an L<DBIx::Meld::ResultSet> object.  Read more at
-L<DBIx::Meld::Traits::ResultSet>.
-
-=cut
-
-with 'DBIx::Meld::Traits::ResultSet';
-
-__PACKAGE__->meta->make_immutable;
-1;
-__END__
 
 =head1 TODO
 
 =over
 
-=item * Support GROUP BY, HAVING, and LIMIT (and Data::Page?) clauses.
+=item * Support GROUP BY and HAVING clauses.
 
 =item * Integrate DBIC's well-tested auto-generated ID retrieval code.  This can be tricky
 since each DB does it in a different way (/looks at Oracle).  Then, insert() can
@@ -255,6 +186,12 @@ appears that SQL::Abstract->values() only works with selects, inserts, and delet
 and points to the area of code that best helps the user understand and fix the issue.
 
 =back
+
+=cut
+
+__PACKAGE__->meta->make_immutable;
+1;
+__END__
 
 =head1 AUTHOR
 
