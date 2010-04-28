@@ -1,6 +1,6 @@
 package DBIx::Meld::Traits::ResultSet::Pager;
 BEGIN {
-  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.08';
+  $DBIx::Meld::Traits::ResultSet::Pager::VERSION = '0.09';
 }
 use Moose::Role;
 

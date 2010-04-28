@@ -20,13 +20,14 @@ my %WriteMakefileArgs = (
                        'AUTHOR' => 'Aran Deltac <bluefeet@gmail.com>',
                        'BUILD_REQUIRES' => {
                                              'DateTime' => '0.55',
+                                             'DateTime::Format::SQLite' => '0.11',
                                              'Test::Exception' => '0.29',
                                              'DBD::SQLite' => '1.29',
                                              'Test::Simple' => '0.94'
                                            },
                        'ABSTRACT' => 'An ORMish amalgamation.',
                        'EXE_FILES' => [],
-                       'VERSION' => '0.08',
+                       'VERSION' => '0.09',
                        'PREREQ_PM' => {
                                         'Data::Page' => '2.02',
                                         'SQL::Abstract' => '1.65',

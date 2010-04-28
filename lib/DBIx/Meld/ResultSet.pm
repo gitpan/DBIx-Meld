@@ -1,6 +1,6 @@
 package DBIx::Meld::ResultSet;
 BEGIN {
-  $DBIx::Meld::ResultSet::VERSION = '0.08';
+  $DBIx::Meld::ResultSet::VERSION = '0.09';
 }
 use Moose;
 use namespace::autoclean;

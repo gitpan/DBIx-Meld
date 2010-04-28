@@ -1,5 +1,8 @@
 Revision history for Perl extension DBIx::Meld.
 
+0.09      2010-04-27
+ - Fix DateTime::Format::SQLite build dependency.
+
 0.08      2010-04-27
  - More documentation edits.
  - Add build prerequisits so that tests actually get run.
